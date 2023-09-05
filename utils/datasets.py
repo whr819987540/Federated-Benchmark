@@ -68,7 +68,7 @@ class VOCDataset(Dataset):
         self.label_files = []
         for img_file in self.img_files:
             split_path = img_file.split(".")
-            path = os.path.join(split_path[0], split_path[1], ".txt")
+            path = os.path.join(split_path[0], split_path[1]+".txt")
             self.label_files.append(path)
 
     def __getitem__(self, index):
@@ -80,15 +80,15 @@ class VOCDataset(Dataset):
         img_path = os.path.join(self.dataset_path, self.img_files[index % len(self.img_files)])
         img = transforms.ToTensor()(Image.open(img_path).convert('RGB'))
 
-        label_path = os.path.join("VOC2005_1/Annotations", self.label_files[index % len(self.img_files)].rstrip())
+        label_path = os.path.join("VOC2005_1/Annotations", self.label_files[index % len(self.img_files)])
 
         targets = []
         # label_path对应的文件中有图片size与box size，需要你自己调整一下，这里只是简单的读取
-        with open(label_path,'r') as f:
+        with open(label_path, 'r') as f:
             content = "".join(f.readlines())
 
             img_size_pattern = r"Image size \(X x Y x C\) : (\d+) x (\d+) x (\d+)"
-            res = re.search(img_size_pattern,content)
+            res = re.search(img_size_pattern, content)
             if res:
                 img_size = res.groups()
             else:
@@ -97,11 +97,10 @@ class VOCDataset(Dataset):
 
             # (Xmin, Ymin) - (Xmax, Ymax) : (41, 40) - (142, 113)
             box_size_pattern = r"\(Xmin, Ymin\) - \(Xmax, Ymax\) : \((\d+), (\d+)\) - \((\d+), (\d+)\)"
-            box_size = re.findall(box_size_pattern,content)
-            
-            
-        
-        
+            box_size = re.findall(box_size_pattern, content)
+
+        print(img_path, img, img_size, box_size)
+
         return img_path, img, targets
 
 
