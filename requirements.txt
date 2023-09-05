@@ -4,7 +4,7 @@ matplotlib
 terminaltables
 pillow
 tqdm
-sklearn
+scikit-learn
 socketIO_client
 flask
 flask_socketio
